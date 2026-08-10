@@ -1,14 +1,20 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 //import './App.css'
-import Login from './Login'
-import TodoList from './TodoList'
-import BookUnopen from './BookUnopen'
+import StartScreen from './pages/StartScreen'
+import SignIn from './pages/SignIn'
+import TodoForm from './pages/TodoForm'
 function App() {
 
   return (
     <>
-      <h1>Hello Frontend</h1>
-      <BookUnopen/> 
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />}/>
+          <Route path="/login" element={<StartScreen/>}/>
+          <Route path="/todo-list" element={<TodoForm/>}/>
+          <Route path="/sign-up" element={<SignIn/>}/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

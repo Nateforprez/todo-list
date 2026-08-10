@@ -1,6 +1,10 @@
 import './BookUnopen.css'; 
 
-function BookUnopen() {
+interface BookUnopenProps {
+    user: string; 
+}
+
+function BookUnopen({ user } : BookUnopenProps) {
     return ( 
         <>
             <div id="book-wrapper">
@@ -9,7 +13,7 @@ function BookUnopen() {
                     <div id="golden-border">
                         <h1>Todo-List</h1>
                     </div>
-                    <h2>For: </h2>
+                    <h2 style={{color: 'white'}}>For: {user}</h2>
                 </div>
                 <div id="page-peak">
                     <div className="page-break"></div>
