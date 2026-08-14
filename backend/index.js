@@ -1,6 +1,7 @@
 const express = require('express'); 
 const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose'); 
+const bcrypt = require('bcrypt'); 
 require('dotenv').config({ path: './backend/.env' }); //loads the .env variables 
 
 const app = express(); 
@@ -52,9 +53,11 @@ app.post('/api/submit/login', async (req, res) => {
       return res.status(401).json({error: "Username or password entered incorrectly."}); 
     } else {
       console.log("Username: " + user.username + ", Password: " + user.password); 
-      if (user.password === passReq)
+      const passMatched = await bcrypt.compare(passReq, user.password)
+      if (passMatched)
         return res.json({success: "Successfully logged in!", user: {id: user.id, username: user.username}});
-      return res.status(401).json({error: "Username or password entered incorrectly."}); 
+      else 
+        return res.status(401).json({error: "Username or password entered incorrectly."}); 
     }
   } catch (error) {
     console.log(error); 
@@ -69,7 +72,9 @@ app.post('/api/submit/sign-in', async (req, res) => {
   const password = req.body.password?.trim(); 
   if (username && password) { 
     try { 
-      const newRow = new userInfo({username: username, password: password}); 
+      const saltRounds = 10; 
+      const hashPassword = await bcrypt.hash(password, saltRounds);  //salt rounds specify the iterations and the time it takes to hash
+      const newRow = new userInfo({username: username, password: hashPassword}); 
       await newRow.save(); //stops fxn execution until data is saved 
       //do if successful 
       console.log("User info successfully stored!"); 
