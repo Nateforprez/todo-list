@@ -1,0 +1,208 @@
+h1 h2 h3 {
+    font-family: "Times New Roman", Arial, sans-serif; 
+    padding: 0; 
+    margin: 0;
+}
+#whole-book-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+.book-wrapper {
+    width: 400px;
+    height: 500px;
+    display: flex;
+    margin: 0; 
+    padding: 0; 
+    padding-bottom: -20px;
+
+    border-top: 5px solid rgb(107, 82, 49);
+}
+#book-wrapper-left {
+    flex-direction: row; 
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 40px;
+}
+#book-wrapper-right {
+   flex-direction: row-reverse;  
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 40px;
+}
+#book-wrapper-inner {
+    width: 100%;
+    height: 100%;
+}
+.book-column-stretch {
+    height: 600px;
+    width: 10%;
+    border-radius: 40px;
+    background-color: maroon; 
+
+    display: flex;
+    align-items: center;
+    z-index: 1;
+}
+#book-column-hider {
+    height: 96%;
+    width: 20px;
+    margin-left: auto;
+
+    background-color: rgb(107, 82, 49); 
+    border-right: 2px solid black;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+
+}
+#book-column-maroon-corner {
+    /* height: 100%;
+    width: 50%; 
+    
+    background-color: rgb(107, 82, 49);  
+    border-right: 1px solid black; 
+    border-top-left-radius: 30px;
+    border: 1px solid black;*/
+}
+.book-column {
+    /* height: 100%;
+    width: 10%;
+    background-color: maroon; 
+    border-left: 2px solid rgb(108, 16, 16); 
+    border-right: 2px solid rgb(108, 16, 16);  */
+}
+.book-content {
+    height: 95%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    position: relative;
+}
+#page-left {
+    margin-left: auto;
+}
+#page-right {
+    margin-right: auto; 
+}
+.page {
+    height: 97%; 
+    width: 100%; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-evenly; 
+    align-items: center;
+
+
+    background-color: white;
+}
+#page-peak-left {
+    flex-direction: row-reverse;
+}
+#page-peak-right {
+    flex-direction: row;
+}
+.page-peak {
+    height: 95%;
+    width: 5%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+.page-break-left {
+    height: 100%;
+    width: calc(100%/3);
+    background-color: white;
+    border-right: 2px solid black; 
+}
+.page-break-right {
+    height: 100%;
+    width: calc(100%/3);
+    background-color: white;
+    border-right: 2px solid black; 
+}
+.horizontal-page-breaks {
+    width: 100%;
+    height: 3%; 
+    background-color: white; 
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 8px;
+
+    gap: 2px;
+}
+#horizontal-left {
+    flex-direction: column-reverse; 
+}
+#horizontal-right {
+    flex-direction: column; 
+    transform: scaleX(-1); 
+}
+.horizontal-page-breaks-left {
+    height: 1.5px;
+    background-color: black;
+}
+.horizontal-page-breaks-right {
+    height: 1.5px;
+    background-color: black;
+}
+.page-line-break {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center; 
+    align-items: center;
+    column-gap: 5px;
+    flex-wrap: wrap; 
+
+    height: 20%;
+    width: 95%; 
+    border-top: 1px dashed rgb(12, 143, 237); 
+    border-right: 1px dashed rgb(12, 143, 237); 
+    border-left: 1px dashed rgb(12, 143, 237); 
+    border-bottom: 1px solid rgb(12, 143, 237); 
+}
+#book-column-seperator {
+    z-index: 2;
+    border-bottom: 20px solid transparent;
+    border-right: 15px solid rgb(185, 7, 7); /* This color makes the triangle */
+}
+#chevron-down-icon {
+    width: 30px;
+    height: 30px;
+}
+
+#edit-task-btn {
+    width: 80px;
+    height: 30px;
+    font-family: var(--font-general); 
+}
+#task-checkbox {
+    width: 30px;
+    height: 30px;
+}
+.task-description-layout {
+    width: 85%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    column-gap: 5px;
+
+    position: relative; 
+
+}
+.visual-task-date {
+    font-size: 1em; 
+    color: rgb(177, 175, 175);
+
+    margin: 0; 
+    padding: 0; 
+    margin-right: auto;
+    position: absolute; 
+    top: 40px;
+    right: 200px;
+
+
+}

@@ -21,8 +21,11 @@ function Login() {
                 })
             }); 
             const data = await response.json();
-            if (response.ok)
+            if (response.ok) { 
+                console.log(data.user.username); 
+                sessionStorage.setItem('username', data.user.username); 
                 navigate('/todo-list');
+            }
             else 
                 loginWarning(data.error); 
 
