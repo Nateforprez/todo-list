@@ -25,6 +25,7 @@ function SignIn() {
             if (!response.ok) {
                 showError(data.error); 
             } else {
+                sessionStorage.setItem('signInSuccessText', "Account created successfully!"); 
                 navigate("/login"); 
                 console.log("Success!"); 
             }

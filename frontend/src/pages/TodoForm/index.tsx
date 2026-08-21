@@ -29,6 +29,11 @@ function TodoForm() {
         event.preventDefault(); 
         const formData = Object.fromEntries(new FormData(event.target)); //turns the task data into an object 
         const { taskHeading, taskDescription, fromDate, toDate, urgencyLevel } = formData; 
+
+        if (formData.fromDate && !handleFromDateCheck(formData.fromDate)) //check if dates are valid 
+            return;         
+        if (formData.toDate && !handleToDateChange(formData.fromDate, formData.toDate))
+            return; 
         try {
             const response = await fetch('/api/submit/todo-info', {
                 method: 'POST', 
@@ -64,8 +69,20 @@ function TodoForm() {
             }
         } catch(err) {
             console.log("Form submission failed", err); 
+            console.log("The error name is: " + err.name); 
+            if (err instanceof TypeError) {
+                if (!taskHeading)  
+                    handleFormUpdate("Please fill in the Task Name section."); 
+                else if (!taskDescription)
+                    handleFormUpdate("Please fill in the Task Description."); 
+                else if (!toDate) 
+                    handleFormUpdate("Please fill in the To Date."); 
+                else if (!urgencyLevel) 
+                    handleFormUpdate("Please check off an urgency."); 
+            } else {
+                handleFormUpdate(err.message); 
+            }
             console.log(err.message); 
-            handleFormUpdate(err.message); 
         }
         //const userId = event.target.elements[].value; 
     } 
@@ -88,6 +105,55 @@ function TodoForm() {
         const updateContainer = document.getElementById('save-update-container'); 
         updateContainer.style.display = 'none'; 
     }
+
+    const handleCheckClick = (event) => {
+        const currCheckbox = event.target; 
+        console.log(currCheckbox.checked); 
+        if (currCheckbox.checked) { 
+            const allCheckboxes = document.getElementsByName('urgencyLevel'); 
+            allCheckboxes.forEach(element => element.checked = false);
+            currCheckbox.checked = true;  
+        } else {
+            currCheckbox.checked = false; 
+        }
+    }
+
+    const handleFromDateCheck = (date) => {
+        const currentDate = new Date(); 
+        currentDate.setHours(0, 0, 0, 0); 
+        const selectedDate = new Date(date + "T00:00:00"); 
+        selectedDate.setHours(0, 0, 0, 0); 
+
+        console.log(selectedDate, currentDate, selectedDate < currentDate); 
+        if (selectedDate < currentDate) {
+            handleFormUpdate("Please select a valid From Date"); 
+            return false; 
+        }
+        return true; 
+    }
+    const handleToDateChange = (fromDate, toDate) => {
+        const currentDate = new Date(); 
+        currentDate.setHours(0, 0, 0, 0); 
+        const userToDate = new Date(toDate + "T00:00:00"); 
+        userToDate.setHours(0, 0, 0, 0); 
+        
+        if (fromDate) { 
+            const userFromDate = new Date(fromDate + "T00:00:00"); 
+            userFromDate.setHours(0, 0, 0, 0); 
+
+            if (userToDate < userFromDate) {
+                handleFormUpdate("Please select a valid date range"); 
+                return false; 
+            }
+        }
+
+        if (userToDate < currentDate) {
+            handleFormUpdate("Please select a valid To Date"); 
+            return false; 
+        } 
+        return true; 
+    }
+
     return (
         <>
             <div id="todo-form-parent-container">
@@ -122,9 +188,9 @@ function TodoForm() {
                             <div id="urgency-container">
                                 <div className="urgency-label-container">
                                     <label htmlFor="urgencyLevel"></label>
-                                    <input type="checkbox" className="urgent-check-box" id="low-urgent" name="urgencyLevel" value="low"></input>
-                                    <input type="checkbox" className="urgent-check-box" id="middle-urgent" name="urgencyLevel" value="middle"></input>
-                                    <input type="checkbox" className="urgent-check-box" id="high-urgent" name="urgencyLevel" value="high"></input>
+                                    <input type="checkbox" className="urgent-check-box" id="low-urgent" name="urgencyLevel" value="low" onClick={handleCheckClick}></input>
+                                    <input type="checkbox" className="urgent-check-box" id="middle-urgent" name="urgencyLevel" value="middle" onClick={handleCheckClick}></input>
+                                    <input type="checkbox" className="urgent-check-box" id="high-urgent" name="urgencyLevel" value="high" onClick={handleCheckClick}></input>
                                 </div>
                                 <div className="urgency-label-container">
                                     <h3>low</h3>

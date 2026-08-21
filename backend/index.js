@@ -7,6 +7,8 @@ require('dotenv').config({ path: './backend/.env' }); //loads the .env variables
 const app = express(); 
 const PORT = 5000;
 
+const { CastError, ValidationError } = mongoose.Error;  
+
 console.log("My URI is: " + process.env.MONGO_URI); 
 
 app.use(bodyParser.urlencoded({ extended: false })); 
@@ -154,11 +156,14 @@ app.post('/api/submit/todo-info', async (req, res) => {
         return res.json({success: "Task successfully saved!"}); 
     }
   } catch(err) {
-      /* console.log("I AM HERE"); 
+      console.log("I AM HERE"); 
       console.log("The name is: " + err.name); 
-      console.log(err); */
-      if (err.name === "CastError") 
-        return res.status(400).json({error: "Account does not exist yet."}); 
+      console.log(err); 
+      if (err instanceof CastError) 
+        return res.status(400).json({error: "Not saved, account does not exist yet."}); 
+      else if (err instanceof ValidationError)
+        return res.status(400).json({error: "Please fill in all the fields."}); 
+
       return res.status(500).json({error: 'internal server error'}); 
   }
   return res.status(500).json({error: 'internal server error'}); 
