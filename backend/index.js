@@ -30,7 +30,44 @@ let userSchema = new mongoose.Schema({
   }
 }); 
 
+
 const userInfo = new mongoose.model("user-acc-info", userSchema);
+
+let todoSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,   
+    ref: 'user-acc-info',
+    required: true 
+  }, 
+  taskName: {
+    type: String, 
+    required: true, 
+    maxlength: 50
+  }, 
+  description: {
+    type: String, 
+    required: false, 
+    maxlength: 100
+  }, 
+  fromDate: {
+    type: String, 
+    required: false 
+  },
+  toDate: {
+    type: String, 
+    required: true 
+  },
+  urgency: {
+    type: String, 
+    required: true 
+  }, 
+  completed: {
+    type: Boolean, 
+    required: false 
+  }
+});  
+
+const taskInfo = new mongoose.model('user-task-info', todoSchema); 
 
 
 app.get('/api/data', (req, res) => {
@@ -95,6 +132,36 @@ app.post('/api/submit/sign-in', async (req, res) => {
         return res.status(500).json({ error: "Internal server error."}); //500: Internal server error 
     }
   }
+}); 
+
+app.post('/api/submit/todo-info', async (req, res) => {
+  const { id, taskHeading, taskDescription, fromDate, toDate, urgencyLevel } = req.body; 
+  
+  try {
+    const userExists = await userInfo.findById(id); 
+    if (userExists) { 
+        const newTaskRow = new taskInfo({
+          userId: id, 
+          taskName: taskHeading, 
+          description: taskDescription, 
+          fromDate: fromDate, 
+          toDate: toDate, 
+          urgency: urgencyLevel, 
+          completed: false 
+        }); 
+        await newTaskRow.save(); 
+        console.log("Task saved successfully!"); 
+        return res.json({success: "Task successfully saved!"}); 
+    }
+  } catch(err) {
+      /* console.log("I AM HERE"); 
+      console.log("The name is: " + err.name); 
+      console.log(err); */
+      if (err.name === "CastError") 
+        return res.status(400).json({error: "Account does not exist yet."}); 
+      return res.status(500).json({error: 'internal server error'}); 
+  }
+  return res.status(500).json({error: 'internal server error'}); 
 }); 
 
 app.listen(PORT, () => {

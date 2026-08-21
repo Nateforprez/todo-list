@@ -1,3 +1,115 @@
-#todo-form-container {
+#todo-form-parent-container {
     background-color: rgb(241, 226, 207);
+}
+#todo-list-form {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center;
+    column-gap: 20px;
+}
+#todo-form {
+    /* background-color: rgb(237, 229, 218); */
+    border: 1px solid red; 
+    width: 45%;
+}
+#add-task-btn {
+    width: 200px;
+    height: 50px;
+
+    font-family: var(--font-general); 
+    font-size: 1em;
+    background-color: rgb(10, 199, 10); 
+    color: white;
+}
+#add-task-btn:hover {
+    border: 2px solid rgb(49, 49, 246); 
+    color: black;
+    cursor: pointer; 
+}
+#todo-form-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+}
+#task-heading {
+    width: 300px;
+}
+#from-to-date-container {
+    height: 30px;
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    column-gap: 20px;
+}
+.urgent-check-box {
+    width: 25px;
+    height: 25px;
+}
+#urgency-container {
+    width: 400px;
+
+    display: flex;
+    flex-direction: column; 
+
+}
+.urgency-label-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; 
+    
+}
+#submit-form-btn {
+    width: 200px;
+    height: 50px;
+
+    font-family: var(--font-general); 
+    font-size: 1em;
+    font-weight: bold;
+    background-color: green; 
+    color: white;
+}
+#submit-form-btn:hover {
+    color: rgb(82, 177, 255); 
+    background-color: white; 
+    cursor: pointer;
+}
+#save-update-container {
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    position: sticky; 
+
+}
+#save-update-text {
+    color: white; 
+    font-family: var(--font-general); 
+    font-size: 1.5em;
+    font-weight: bold;
+}
+#close-update-banner-btn {
+    background: none;     
+    border: none; 
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex; 
+    width: 30px;
+    height: 30px;
+
+    position: relative; 
+    left: 38%;
+    transform: translateX(-100%);
+}
+#x-mark {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    color: paleturquoise; 
+}
+#x-mark:hover {
+    background-color: white; 
+    cursor: pointer; 
 }

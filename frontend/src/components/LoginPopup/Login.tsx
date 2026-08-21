@@ -23,7 +23,10 @@ function Login() {
             const data = await response.json();
             if (response.ok) { 
                 console.log(data.user.username); 
-                sessionStorage.setItem('username', data.user.username); 
+                sessionStorage.setItem('user', JSON.stringify({
+                    username: data.user.username, 
+                    userId: data.user.id
+                }));
                 navigate('/todo-list');
             }
             else 
