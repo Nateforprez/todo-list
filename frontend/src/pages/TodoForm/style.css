@@ -8,8 +8,8 @@
     column-gap: 20px;
 }
 #todo-form {
-    /* background-color: rgb(237, 229, 218); */
-    border: 1px solid red; 
+    /* background-color: rgb(237, 229, 218); 
+    border: 1px solid red; */
     width: 45%;
 }
 #add-task-btn {
@@ -53,13 +53,20 @@
 
     display: flex;
     flex-direction: column; 
+    justify-content: space-evenly;
 
 }
 .urgency-label-container {
     width: 100%;
-    display: flex;
-    justify-content: space-between; 
-    
+    display: flex; 
+
+}
+.urgency-label-container > input {
+    flex: 1;
+}
+.urgency-label-container > h3 {
+    flex: 1;
+    text-align: center;
 }
 #submit-form-btn {
     width: 200px;
@@ -99,8 +106,8 @@
     width: 30px;
     height: 30px;
 
-    position: relative; 
-    left: 38%;
+    position: sticky; 
+    left: 100%;
     transform: translateX(-100%);
 }
 #x-mark {
