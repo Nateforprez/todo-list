@@ -186,23 +186,38 @@ h1 h2 h3 {
     width: 85%;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
-    column-gap: 5px;
+    column-gap: 10px;
 
     position: relative; 
 
 }
+.task-heading {
+    width: 100%; 
+    height: 100%;
+    position: relative;
+    display: flex; 
+    /* justify-content: center; */
+    align-items: center; 
+    column-gap: 10px;
+}
 .visual-task-date {
     font-size: 1em; 
-    color: rgb(177, 175, 175);
-
+    /* color: rgb(177, 175, 175); */
+    color: rgb(113, 113, 113);
+    width: fit-content;
     margin: 0; 
     padding: 0; 
-    margin-right: auto;
+    /* margin-right: auto;*/
     position: absolute; 
-    top: 40px;
-    right: 200px;
+    top: 65px;
+    left: 0px;
 
-
+}
+.task-heading > h1 {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
 }

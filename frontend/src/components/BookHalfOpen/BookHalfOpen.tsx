@@ -1,9 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './BookHalfOpen.css'
 import chevronDown from '../../assets/chevron-down-solid-full.svg';
 
-function BookHalfOpen() {
+
+interface BookHalfOpenProps {
+    updateBook: boolean, 
+    userId: String; 
+}
+
+function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
     
+    const [ lineNumber, setLineNumber ] = useState<number>(1); 
+
     useEffect(() => {
         const itemsLeft = document.querySelectorAll<HTMLElement>('.page-break-left');  
         itemsLeft.forEach((item, index) => {
@@ -32,7 +40,117 @@ function BookHalfOpen() {
             item.style.width = `${baseWidth + increase}%`; 
         }); 
 
-    }, []); 
+        if (updateBook || !updateBook) {
+            console.log("Handling update..."); 
+            handleUpdateBookChange();
+        }
+
+    }, [updateBook]); 
+
+
+    useEffect(() => {
+        if (userId) { 
+            fetchTasks(); 
+        }
+    }, [userId]); 
+
+    const fetchTasks = async() => {
+        console.log("The userId is: " + userId); 
+        const response = await fetch(`/api/get/todo-info?userId=${userId}`); 
+        const data = await response.json(); //used specifically for fetch, waits for the fully donwloaded stream and then converts it into a obj
+        if (response.ok) { 
+            console.log("The data: " + data.taskInfo); 
+            updateTasks(data.taskInfo);  
+        } else {
+            console.log("Didn't retrieve data"); 
+        }
+    }
+
+    const handleUpdateBookChange = () => {
+        console.log(`page-line-break-${lineNumber}`); 
+        const storedToDoInfo = sessionStorage.getItem('todoInfo'); 
+        const info = JSON.parse(storedToDoInfo); 
+
+        if (storedToDoInfo) {
+            updateToDoList(info.taskHeading, info.fromDate, info.toDate, info.urgencyLevel, lineNumber);
+            setLineNumber(prev => prev + 1);  
+        }
+        sessionStorage.removeItem('todoInfo'); 
+        //use querySelector to grab all line elements 
+        //grab info out from session storage
+        //grab the innerHTML and add the necessary elements with db info
+        //document.querySelectorAll
+    }
+
+    const updateToDoList = (taskName, fromDate, toDate, urgencyLevel, lineNumber) => {
+        console.log(taskName); 
+        const calculateDays = !fromDate; 
+        let dayDiff; 
+        let dayMsg; 
+        let textColour = "rgb(113, 113, 113)"; 
+        if (calculateDays) {
+            const currentDate = new Date(); 
+            currentDate.setHours(0, 0, 0, 0); 
+
+            const userToDate = new Date(toDate + "T00:00:00"); 
+            userToDate.setHours(0, 0, 0, 0); 
+
+            const msDayDiff = Math.abs(userToDate - currentDate); 
+            const toDateBehind = ((userToDate - currentDate) < 0) ? true : false; 
+            textColour = toDateBehind ? "red" : "rgb(113, 113, 113)"; 
+            console.log(toDateBehind); 
+            dayDiff = Math.floor(msDayDiff / (1000 * 60 * 60 * 24)); 
+
+            
+            switch (dayDiff) {
+                case 0: 
+                    dayMsg = "Due Today"; 
+                    textColour = "red"; 
+                    break; 
+                case 1: 
+                    dayMsg = toDateBehind ? dayDiff + " day(s) overdue" : dayDiff + " day left"; 
+                    break; 
+                default: 
+                    dayMsg = toDateBehind ? dayDiff + " day(s) overdue" : dayDiff + " days left"; 
+            }
+        }
+        const lineRows = document.getElementById(`page-line-break-${lineNumber}`); 
+        if (lineRows) { 
+            let urgencyBackgroundColour = ""; 
+            if (urgencyLevel === "low") 
+                urgencyBackgroundColour = "rgba(182, 218, 228, 0.43)"; 
+            else if (urgencyLevel === "middle")
+                urgencyBackgroundColour = "rgba(192, 249, 177, 0.534)"; 
+            else if (urgencyLevel === "high")
+                urgencyBackgroundColour = "rgba(210, 170, 161, 0.58)"; 
+
+            lineRows.style.backgroundColor = urgencyBackgroundColour; 
+
+            lineRows.innerHTML = `
+                <div class="task-description-layout">
+                    <div class="task-heading">
+                        <h1>${taskName}</h1>
+                    </div>
+                    <img src=${chevronDown} id="chevron-down-icon" aria-hidden="true"></img>
+                    <button id="edit-task-btn">Edit</button>
+                    <h3 class="visual-task-date" style="color: ${textColour};">${calculateDays ? `${dayMsg}` : `${fromDate} to ${toDate}`} </h3>  
+                </div>
+                <input type="checkbox" id="task-checkbox"></input>
+            `; 
+        }
+    }
+
+    const updateTasks = (data) => {
+        console.log("The data retrieved: " + data); 
+        let currLineNumber = lineNumber; 
+        for (const task of data) {
+            console.log(task); 
+            const { taskName, description, fromDate, toDate, urgency, completed } = task; 
+            updateToDoList(taskName, fromDate, toDate, urgency, currLineNumber); 
+            currLineNumber += 1; 
+        }
+        setLineNumber(currLineNumber); 
+    }
 
     return (
         <>
@@ -53,11 +171,11 @@ function BookHalfOpen() {
                             <div className="horizontal-page-breaks-left"/> 
                         </div>
                         <div className="page" id="page-left">
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
+                            <div className="page-line-break" id="page-line-break-1"></div>
+                            <div className="page-line-break" id="page-line-break-2"></div>
+                            <div className="page-line-break" id="page-line-break-3"></div>
+                            <div className="page-line-break" id="page-line-break-4"></div>
+                            <div className="page-line-break" id="page-line-break-5"></div>
                         </div>
                     </div>
                 </div>
@@ -81,19 +199,23 @@ function BookHalfOpen() {
                             <div className="horizontal-page-breaks-right"/> 
                         </div>
                         <div className="page" id="page-left">
-                            <div className="page-line-break">
+                            <div className="page-line-break" id="page-line-break-6">
+                                {/*
                                 <div className="task-description-layout">
-                                    <h1 style={{padding: 0, margin: 0}}>Task Name</h1>
+                                    <div className="task-heading">
+                                        <h1>Task Name</h1>
+                                        <h3 className="visual-task-date">Date here...</h3>
+                                    </div>
                                     <img src={chevronDown} id="chevron-down-icon" aria-hidden="true"></img>
                                     <button id="edit-task-btn">Edit</button>
-                                    <h3 className="visual-task-date">Date here...</h3>
                                 </div>
-                                <input type="checkbox" id="task-checkbox"></input>
-                            </div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
-                            <div className="page-line-break"></div>
+                                <input type="checkbox" id="task-checkbox"></input> 
+                                */}
+                            </div> 
+                            <div className="page-line-break" id="page-line-break-7"></div>
+                            <div className="page-line-break" id="page-line-break-8"></div>
+                            <div className="page-line-break" id="page-line-break-9"></div>
+                            <div className="page-line-break" id="page-line-break-10"></div>
                         </div>
                     </div>
                 </div>

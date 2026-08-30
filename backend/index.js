@@ -124,7 +124,7 @@ app.post('/api/submit/sign-in', async (req, res) => {
         console.log("ERROR: " + error.kind); 
         if (error.code === 11000)
           return res.status(400).json({error: "Username already exists."}); //400: client-side error 
-        else if (error.name === 'ValidationError') {
+        else if (error instanceof ValidationError) {
           const errorMessages = Object.values(error.errors).map(e => {
             console.log("Error Kind: " + e.kind); 
             if (e.kind === 'minlength')
@@ -158,7 +158,7 @@ app.post('/api/submit/todo-info', async (req, res) => {
   } catch(err) {
       console.log("I AM HERE"); 
       console.log("The name is: " + err.name); 
-      console.log(err); 
+      //console.log(err); 
       if (err instanceof CastError) 
         return res.status(400).json({error: "Not saved, account does not exist yet."}); 
       else if (err instanceof ValidationError)
@@ -167,6 +167,21 @@ app.post('/api/submit/todo-info', async (req, res) => {
       return res.status(500).json({error: 'internal server error'}); 
   }
   return res.status(500).json({error: 'internal server error'}); 
+}); 
+
+app.get('/api/get/todo-info', async (req, res) => { //: means to treat the dyanamic route parameter as a variable 
+  const reqUserId = req.query.userId; 
+  try {
+    const userTaskInfo = await taskInfo.find({userId: reqUserId}); 
+    if (userTaskInfo) {
+      return res.json({success: "User info successfully retrieved!", taskInfo: userTaskInfo}); 
+    }
+  } catch(err) {
+    console.log(err); 
+    return res.status(400).json({error: "Error retrieving user task info"}); 
+  }
+  return res.status(500).json({error: "internal server error"}); 
+
 }); 
 
 app.listen(PORT, () => {
