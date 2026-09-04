@@ -261,3 +261,8 @@ h1 h2 h3 {
 .point-icon:hover { 
     filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
 }
+#task-number {
+    font-family: var(--font-general);
+    font-weight: bold;
+    font-size: 1.1em;
+}

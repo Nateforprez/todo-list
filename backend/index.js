@@ -69,6 +69,18 @@ let todoSchema = new mongoose.Schema({
   }
 });  
 
+todoSchema.pre('save', async function () { //hook has to come before the model initialization 
+  //this refers to the specific document we are trying to save
+  //this.constructor refers to the model 
+  const countTasks = await this.constructor.countDocuments({userId: this.userId}); //CHECK HERE 
+  if (countTasks > 30) {
+    const error = new Error("Task limit reached!"); 
+    error.name = "LimitReachedError"; 
+    error.code = "LIMIT_EXCEEDED"; 
+    throw error; 
+  }
+}); 
+
 const taskInfo = new mongoose.model('user-task-info', todoSchema); 
 
 
@@ -163,8 +175,9 @@ app.post('/api/submit/todo-info', async (req, res) => {
         return res.status(400).json({error: "Not saved, account does not exist yet."}); 
       else if (err instanceof ValidationError)
         return res.status(400).json({error: "Please fill in all the fields."}); 
-
-      return res.status(500).json({error: 'internal server error'}); 
+      else if (err.name === "LimitReachedError")
+        return res.status(400).json({error: err.message}); 
+      return res.status(500).json({error: 'internal server error'}); //CHECK HERE  
   }
   return res.status(500).json({error: 'internal server error'}); 
 }); 
@@ -183,6 +196,7 @@ app.get('/api/get/todo-info', async (req, res) => { //: means to treat the dyana
   return res.status(500).json({error: "internal server error"}); 
 
 }); 
+
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);

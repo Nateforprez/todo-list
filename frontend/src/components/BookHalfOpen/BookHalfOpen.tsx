@@ -15,6 +15,7 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
     
     const [ lineNumber, setLineNumber ] = useState<number>(1); 
     const [ page, setPage ] = useState<number>(1); 
+    const [ taskNum, setTaskNum ] = useState<number>(0); 
 
     useEffect(() => {
         const itemsLeft = document.querySelectorAll<HTMLElement>('.page-break-left');  
@@ -176,6 +177,11 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
 
             lineRows.style.backgroundColor = urgencyBackgroundColour; 
 
+            const checkbox = document.createElement('input'); 
+            checkbox.type = 'checkbox'; 
+            checkbox.id="task-checkbox"; 
+            checkbox.addEventListener('click', handleCheckClick); 
+
             lineRows.innerHTML = `
                 <div class="task-description-layout">
                     <div class="task-heading">
@@ -185,8 +191,9 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
                     <button id="edit-task-btn">Edit</button>
                     <h3 class="visual-task-date" style="color: ${textColour};">${calculateDays ? `${dayMsg}` : `${fromDate} to ${toDate}`} </h3>  
                 </div>
-                <input type="checkbox" id="task-checkbox"></input>
+                
             `; 
+            lineRows.appendChild(checkbox); 
         }
     }
 
@@ -225,6 +232,32 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         setPage(prev => prev === 3 ? 3 : prev + 1); 
     }
 
+    const handleCheckClick = (e) => {
+        if (e.target.checked)
+            setTaskNum(prev => prev + 1); 
+        else 
+            setTaskNum(prev => prev - 1); 
+        console.log("RUNNING!"); 
+    }
+
+    useEffect(() => {
+        if (taskNum >= 1)
+            handleFormUpdate(); 
+        else if (taskNum === 0) {
+            const updateContainer = document.getElementById('save-update-container'); 
+            updateContainer.style.display = 'none'; 
+        }
+            
+            
+    }, [taskNum]); 
+
+    const handleFormUpdate = () => {
+        const updateContainer = document.getElementById('save-update-container'); 
+        const updateText = document.getElementById('save-update-text'); 
+        updateContainer.style.backgroundColor = 'orange'; 
+        updateContainer.style.display = 'flex'; 
+        updateText.innerHTML = `Are you sure you want to check off <span id="task-number" style="color: black">${taskNum}</span> task(s)?`; 
+    }
     return (
         <>
             <div id="book-parent-container">
@@ -296,7 +329,7 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
                                         <img src={chevronDown} id="chevron-down-icon" aria-hidden="true"></img>
                                         <button id="edit-task-btn">Edit</button>
                                     </div>
-                                    <input type="checkbox" id="task-checkbox"></input> 
+                                    <input type="checkbox" id="task-checkbox" onClick={handleCheckClick}></input> 
                                     */}
                                 </div> 
                                 <div className="page-line-break" id="page-line-break-7"></div>
@@ -323,11 +356,11 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
                 </div>
                 
                 <div className="navigate-pages">
-                    <button className="nav-btn" id="nav-left-btn">
-                        <img src={leftPoint} onClick={handleLeftBtnClick} aria-hidden={true} className="point-icon"></img>
+                    <button className="nav-btn" id="nav-left-btn" onClick={handleLeftBtnClick}>
+                        <img src={leftPoint} aria-hidden={true} className="point-icon"></img>
                     </button>
-                    <button className="nav-btn" id="nav-right-btn">
-                        <img src={rightPoint} onClick={handleRightBtnClick} aria-hidden={true} className="point-icon"></img>
+                    <button className="nav-btn" id="nav-right-btn" onClick={handleRightBtnClick}>
+                        <img src={rightPoint} aria-hidden={true} className="point-icon"></img>
                     </button>
                 </div>
 
