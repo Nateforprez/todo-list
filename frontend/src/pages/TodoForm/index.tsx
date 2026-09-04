@@ -7,6 +7,7 @@ function TodoForm() {
 
     const [ username, setUsername ] = useState(""); 
     const [ userId, setUserId ] = useState(""); 
+    const [ updateVisuals, setUpdateVisuals ] = useState<boolean>(false); 
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user'); 
@@ -62,7 +63,10 @@ function TodoForm() {
                     urgencyLevel: urgencyLevel.toString(), 
                     completed: false 
                 }));    
+                console.log("HELLO I EXIST"); 
+                setUpdateVisuals(!updateVisuals); 
                 handleFormUpdate(data); 
+                event.target.reset();
             } else {
                 const error = new Error(data.error); 
                 throw error; 
@@ -165,7 +169,7 @@ function TodoForm() {
                 </div>
                 <h1 style={{textAlign: "center"}}>Hello {username}!</h1>
                 <div id="todo-list-form">
-                    <BookHalfOpen/> 
+                    <BookHalfOpen updateBook={updateVisuals} userId={userId}/> 
                     <button id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
                     <form action="/api/submit/todo-info" method="POST" id="todo-form" style={{display: 'none'}} onSubmit={handleFormSubmission}>
                         <div id="todo-form-container">
