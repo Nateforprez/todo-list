@@ -9,7 +9,6 @@ const PORT = 5000;
 
 const { CastError, ValidationError } = mongoose.Error;  
 
-console.log("My URI is: " + process.env.MONGO_URI); 
 
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(express.json()); 

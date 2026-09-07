@@ -47,13 +47,12 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             item.style.width = `${baseWidth + increase}%`; 
         }); 
 
-        if (updateBook || !updateBook) {
-            console.log("Handling update..."); 
-            handleUpdateBookChange();
-        }
+    }, []); 
 
-    }, [updateBook]); 
-
+    useEffect(() => {
+        //console.log("Handling update..."); 
+        handleUpdateBookChange();
+    }, [updateBook])
 
     useEffect(() => {
         if (userId) { 
@@ -63,7 +62,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
     }, [userId]); 
 
     useEffect(() => {
-        if (lineNumber === 1) 
+        if (lineNumber === 1 && userId) 
             fetchTasks(); 
     }, [lineNumber]); 
     /**useEffect(() => {
@@ -128,7 +127,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         //console.log(`page-line-break-${lineNumber}`); 
         const storedToDoInfo = sessionStorage.getItem('todoInfo'); 
         const info = JSON.parse(storedToDoInfo); 
-        console.log(info); 
+        //console.log(info); 
         if (storedToDoInfo) {
             updateToDoList(info.taskId, info.taskHeading, info.fromDate, info.toDate, info.urgencyLevel, lineNumber);
             setLineNumber(prev => prev + 1);  //CHECK HERE IF BUG LOADING the tasks 
@@ -222,7 +221,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         //console.log("The data retrieved: " + data); 
         let currLineNumber = lineNumber; 
         for (const task of data) {
-            console.log(task); 
+            //console.log(task); 
             const { _id: taskId, taskName, description, fromDate, toDate, urgency, completed } = task; 
             updateToDoList(taskId, taskName, fromDate, toDate, urgency, currLineNumber); 
             currLineNumber += 1; 
@@ -236,7 +235,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         pageFlip.volume = 0.5; 
         if (pageFlip.paused) { 
             pageFlip.play();
-            console.log("Sound played"); 
+            //console.log("Sound played"); 
         }
 
         setPage(prev => prev === 1 ? 1 : prev - 1); 
@@ -248,7 +247,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         pageFlip.volume = 0.5; 
         if (pageFlip.paused) { 
             pageFlip.play();
-            console.log("Sound played"); 
+            //console.log("Sound played"); 
         }
         setPage(prev => prev === 3 ? 3 : prev + 1); 
     }
