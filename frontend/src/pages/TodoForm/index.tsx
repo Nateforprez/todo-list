@@ -2,12 +2,14 @@ import './style.css'
 import BookHalfOpen from '../../components/BookHalfOpen/BookHalfOpen' 
 import { useEffect, useState } from 'react';
 import xMark from '../../assets/x-solid-full.svg'; 
+import returnArrow from '../../assets/arrow-return.svg'; 
 
 function TodoForm() {
 
     const [ username, setUsername ] = useState(""); 
     const [ userId, setUserId ] = useState(""); 
     const [ updateVisuals, setUpdateVisuals ] = useState<boolean>(false); 
+    const [updateTaskPopup, setTaskPopup] = useState<boolean>(false); 
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user'); 
@@ -21,9 +23,33 @@ function TodoForm() {
     function handleAddTaskBtn(event) {
         if (event.currentTarget.id === "add-task-btn") {
             event.currentTarget.style.display = 'none'; 
+            const deleteBtn = document.getElementById('delete-task-btn'); 
+            deleteBtn.style.display = "none"; 
             const todoForm = document.getElementById('todo-form'); 
             todoForm.style.display = 'block'; 
         }
+    }
+    const handleDeleteTaskBtn = (e) => {
+        e.currentTarget.style.display = 'none'; 
+        const addTaskBtn = document.getElementById('add-task-btn'); 
+        addTaskBtn.style.display = "none"; 
+        const container = document.getElementById('delete-task-container'); 
+        container.style.display = "flex"; 
+
+        setTaskPopup(true); 
+        if (e.currentTarget.id === "delete-task-btn") {
+            console.log("Delete btn pressed"); 
+        }
+    }
+
+    const handleReturnClick = (e) => {
+        const parent = e.currentTarget.closest(".pop-up"); 
+        parent.style.display = "none"; 
+        const deleteBtn = document.getElementById('delete-task-btn'); 
+        deleteBtn.style.display = "block"; 
+        const addTaskBtn = document.getElementById('add-task-btn'); 
+        addTaskBtn.style.display = "block"; 
+        setTaskPopup(false);
     }
     
     const handleFormSubmission = async(event) => {
@@ -55,7 +81,9 @@ function TodoForm() {
             const data = await response.json(); 
             if (response.ok) {
                 console.log(data.success); 
+                console.log(data.taskId); 
                 sessionStorage.setItem('todoInfo', JSON.stringify({
+                    taskId: data.taskId, 
                     taskHeading: taskHeading.toString(), 
                     taskDescription: taskDescription.toString(), 
                     fromDate: fromDate.toString(), 
@@ -63,7 +91,7 @@ function TodoForm() {
                     urgencyLevel: urgencyLevel.toString(), 
                     completed: false 
                 }));    
-                console.log("HELLO I EXIST"); 
+                //console.log("HELLO I EXIST"); 
                 setUpdateVisuals(!updateVisuals); 
                 handleFormUpdate(data); 
                 event.target.reset();
@@ -91,6 +119,44 @@ function TodoForm() {
         //const userId = event.target.elements[].value; 
     } 
 
+    const handleTaskDeletion = async (ids) => {
+        try {
+            const response = await fetch(`/api/delete/todo-info?userId=${userId}`, {
+                method: 'DELETE', 
+                headers: {
+                    'Content-Type': 'application/json'
+                }, 
+                body: JSON.stringify({ 
+                    taskIds: ids 
+                }) 
+            }); 
+            const data = await response.json(); 
+
+            if (response.ok) {
+                console.log(data.success); 
+                setUpdateVisuals(!updateVisuals); 
+                handleDeletionUpdated(data, ids.length); 
+            }
+        } catch (err) {
+            handleDeletionUpdated("Error: Tasks not deleted " + err); 
+            console.log(err); 
+        }
+        
+    }
+    const handleDeletionUpdated = (msg, taskNum) => {
+        const updateContainer = document.getElementById('deletion-update-container'); 
+        console.log("updateContainer: " + updateContainer); 
+        const updateText = updateContainer.querySelector('#delete-update-text'); 
+        if (msg.success) { 
+            updateContainer.style.backgroundColor = 'green'; 
+            updateText.textContent = taskNum + " task(s) " + msg.success; 
+            updateContainer.style.display = 'flex'; 
+        } else {
+            updateContainer.style.backgroundColor = 'red'; 
+            updateText.textContent = msg; 
+            updateContainer.style.display = 'flex'; 
+        }
+    }
     const handleFormUpdate = (msg) => {
         const updateContainer = document.getElementById('save-update-container'); 
         const updateText = document.getElementById('save-update-text'); 
@@ -105,9 +171,9 @@ function TodoForm() {
             updateContainer.style.display = 'flex'; 
         }
     }
-    const handleCloseUpdateClick = () => {
-        const updateContainer = document.getElementById('save-update-container'); 
-        updateContainer.style.display = 'none'; 
+    const handleCloseUpdateClick = (e) => {
+        const container = e.currentTarget.parentElement; 
+        container.style.display = 'none'; 
     }
 
     const handleCheckClick = (event) => {
@@ -157,22 +223,49 @@ function TodoForm() {
         } 
         return true; 
     }
+    
+    const confirmDeleteTask = (e) => {
+        const taskContainer = document.querySelectorAll(".task-description-layout"); 
+        const ids = []; 
+        taskContainer.forEach(container => {
+            const parent = container.parentElement; 
+            if (parent.querySelector('#task-checkbox').checked) {
+                const id = container.getAttribute('data-id'); 
+                ids.push(id); 
+            } 
+        }); 
+        console.log(ids); 
+        if (ids.length > 0)
+            handleTaskDeletion(ids); 
+        else 
+            handleDeletionUpdated("Please select task(s) to delete."); 
+    }
 
     return (
         <>
             <div id="todo-form-parent-container">
-                <div id="save-update-container" style={{display: 'none'}}>
-                    <h2 id="save-update-text"></h2>
-                    <button id="close-update-banner-btn" onClick={handleCloseUpdateClick}>
-                        <img id="x-mark" src={xMark} aria-hidden="true"></img>
+                <div id="save-update-container" className="update-container" style={{display: 'none'}}>
+                    <h2 id="save-update-text" className="update-text"></h2>
+                    <button className="close-update-banner-btn" onClick={handleCloseUpdateClick}>
+                        <img id="x-mark" className="x-icon" src={xMark} aria-hidden="true"></img>
+                    </button>
+                </div>
+                <div id="deletion-update-container" className="update-container" style={{display: 'none'}}>
+                    <h2 id="delete-update-text" className="update-text"></h2>
+                    <button className="close-update-banner-btn" onClick={handleCloseUpdateClick}>
+                        <img id="x-mark" className="x-icon" src={xMark} aria-hidden="true"></img>
                     </button>
                 </div>
                 <h1 style={{textAlign: "center"}}>Hello {username}!</h1>
                 <div id="todo-list-form">
-                    <BookHalfOpen updateBook={updateVisuals} userId={userId}/> 
-                    <button id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
-                    <form action="/api/submit/todo-info" method="POST" id="todo-form" style={{display: 'none'}} onSubmit={handleFormSubmission}>
+                    <BookHalfOpen updateBook={updateVisuals} userId={userId} showTaskPopup={updateTaskPopup}/> 
+                    <button className="task-btn" id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
+                    <button className="task-btn" id="delete-task-btn" onClick={handleDeleteTaskBtn}>delete task...</button>
+                    <form action="/api/submit/todo-info" method="POST" id="todo-form" className="pop-up" style={{display: 'none'}} onSubmit={handleFormSubmission}>
                         <div id="todo-form-container">
+                            <button id="return-btn" type="button" onClick={handleReturnClick}>
+                                <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                            </button>
                             <h2>Task Name</h2>
                             <label htmlFor="taskHeading"/>
                             <input type="text" id="task-heading" name="taskHeading"  placeholder="Type your task heading here..."></input>
@@ -205,6 +298,13 @@ function TodoForm() {
                             <button type="submit" id="submit-form-btn">Submit</button>
                         </div>
                     </form>
+                    <div id="delete-task-container" className="pop-up" style={{display: 'none'}}>
+                        <button id="return-btn" type="button" onClick={handleReturnClick}>
+                            <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                        </button>
+                        <h2>Check off the tasks you want to delete: </h2>
+                        <button className="task-btn" id="confirm-delete-task-btn" onClick={confirmDeleteTask}>delete</button>
+                    </div>
                 </div>
             </div>
         </>

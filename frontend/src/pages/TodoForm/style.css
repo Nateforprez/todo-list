@@ -7,32 +7,42 @@
     justify-content: center;
     column-gap: 20px;
 }
-@media (max-width: 900px) {
-    #todo-list-form {
-        display: flex; 
-        flex-direction: row; 
-        justify-content: center;
-        flex-wrap: wrap; 
-        column-gap: 20px;
-    }
-}
 #todo-form {
     /* background-color: rgb(237, 229, 218); 
     border: 1px solid red; */
     width: 45%;
 }
-#add-task-btn {
+.task-btn {
     width: 200px;
     height: 50px;
-
     font-family: var(--font-general); 
     font-size: 1em;
+}
+#add-task-btn {
     background-color: rgb(10, 199, 10); 
     color: white;
+}
+#delete-task-btn {
+    background-color: red; 
+    color: black;
+}
+#confirm-delete-task-btn {
+    background-color: red; 
+    color: black; 
 }
 #add-task-btn:hover {
     border: 2px solid rgb(49, 49, 246); 
     color: black;
+    cursor: pointer; 
+}
+#delete-task-btn:hover {
+    border: 2px solid rgb(49, 49, 246); 
+    color: white;
+    cursor: pointer; 
+}
+#confirm-delete-task-btn:hover {
+    border: 2px solid rgb(49, 49, 246); 
+    color: white;
     cursor: pointer; 
 }
 #todo-form-container {
@@ -42,6 +52,7 @@
     flex-direction: column; 
     justify-content: center; 
     align-items: center;
+    position: relative; 
 }
 #task-heading {
     width: 300px;
@@ -93,20 +104,25 @@
     cursor: pointer;
 }
 #save-update-container {
+
+}
+.update-container {
     width: 100%;
     height: 50px;
     justify-content: center;
     align-items: center;
     position: sticky; 
-
 }
 #save-update-text {
+
+}
+.update-text {
     color: white; 
     font-family: var(--font-general); 
     font-size: 1.5em;
     font-weight: bold;
 }
-#close-update-banner-btn {
+.close-update-banner-btn {
     background: none;     
     border: none; 
     padding: 0;
@@ -119,13 +135,55 @@
     left: 100%;
     transform: translateX(-100%);
 }
-#x-mark {
+.x-icon {
     display: block;
     max-width: 100%;
     height: auto;
     color: paleturquoise; 
 }
-#x-mark:hover {
+.x-icon:hover {
     background-color: white; 
     cursor: pointer; 
+}
+#return-btn {
+    background: none; 
+    border: none; 
+    padding: 0; 
+    display: inline-flex; 
+    width: 30px;
+    height: 40px;
+
+    position: absolute; 
+    top: 10px;
+    left: 50px;
+    rotate: 90deg;
+}
+#return-btn:hover {
+    cursor: pointer;
+}
+#return-arrow-img:hover {
+    filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
+}
+#delete-task-container {
+    width: 45%; 
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; 
+}
+@media (max-width: 900px) {
+    #todo-list-form {
+        display: flex; 
+        flex-direction: row; 
+        justify-content: center;
+        flex-wrap: wrap; 
+        column-gap: 20px;
+    }
+    #todo-form {
+        width: 80%;
+    }
+    #delete-task-container {
+        width: 80%;
+    }
 }

@@ -9,9 +9,9 @@ const PORT = 5000;
 
 const { CastError, ValidationError } = mongoose.Error;  
 
-console.log("My URI is: " + process.env.MONGO_URI); 
 
 app.use(bodyParser.urlencoded({ extended: false })); 
+app.use(express.json()); 
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("Successfully connected to MongoDB!"))
@@ -163,14 +163,17 @@ app.post('/api/submit/todo-info', async (req, res) => {
           urgency: urgencyLevel, 
           completed: false 
         }); 
-        await newTaskRow.save(); 
+        const response = await newTaskRow.save(); 
+        console.log(response); 
+        const taskId = response.id; 
+        console.log(taskId); 
         console.log("Task saved successfully!"); 
-        return res.json({success: "Task successfully saved!"}); 
+        return res.json({success: "Task successfully saved!", taskId: taskId}); 
     }
   } catch(err) {
       console.log("I AM HERE"); 
       console.log("The name is: " + err.name); 
-      //console.log(err); 
+      console.log(err); 
       if (err instanceof CastError) 
         return res.status(400).json({error: "Not saved, account does not exist yet."}); 
       else if (err instanceof ValidationError)
@@ -195,6 +198,20 @@ app.get('/api/get/todo-info', async (req, res) => { //: means to treat the dyana
   }
   return res.status(500).json({error: "internal server error"}); 
 
+}); 
+
+app.delete('/api/delete/todo-info', async (req, res) => {
+  const { taskIds } = req.body; 
+  console.log(taskIds)
+  try {
+    for (const id of taskIds) {
+      await taskInfo.findByIdAndDelete(id); 
+    }
+    res.json({success: "successfully deleted!"}); 
+  } catch (err) {
+    console.log(err); 
+    res.status(500).json({error: err}); 
+  }
 }); 
 
 

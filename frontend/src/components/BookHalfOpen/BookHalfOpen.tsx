@@ -4,18 +4,21 @@ import chevronDown from '../../assets/chevron-down-solid-full.svg';
 import leftPoint from '../../assets/hand-point-left-solid-full.svg'; 
 import rightPoint from '../../assets/hand-point-right-solid-full.svg'; 
 import pageFlipAudio from '../../assets/page-flip-sound.mp3'; 
+import checkOffSfx from '../../assets/cross-out-sfx.mp3'; 
 
 interface BookHalfOpenProps {
     updateBook: boolean, 
-    userId: String; 
+    userId: String, 
+    showTaskPopup: boolean
 }
 
 
-function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
+function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
     
     const [ lineNumber, setLineNumber ] = useState<number>(1); 
     const [ page, setPage ] = useState<number>(1); 
     const [ taskNum, setTaskNum ] = useState<number>(0); 
+    const [ deletionMsg, setDeleteMsg ] = useState(false); 
 
     useEffect(() => {
         const itemsLeft = document.querySelectorAll<HTMLElement>('.page-break-left');  
@@ -45,21 +48,25 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
             item.style.width = `${baseWidth + increase}%`; 
         }); 
 
-        if (updateBook || !updateBook) {
-            //console.log("Handling update..."); 
-            handleUpdateBookChange();
-        }
+    }, []); 
 
-    }, [updateBook]); 
-
+    useEffect(() => {
+        //console.log("Handling update..."); 
+        handleUpdateBookChange();
+    }, [updateBook])
 
     useEffect(() => {
         if (userId) { 
+            console.log("user id"); 
             fetchTasks(); 
         }
     }, [userId]); 
 
     useEffect(() => {
+        if (lineNumber === 1 && userId) 
+            fetchTasks(); 
+    }, [lineNumber]); 
+    /**useEffect(() => {
         if (lineNumber === 11) {  
             const pageLeft = document.getElementById("page-3"); 
             const pageRight = document.getElementById("page-4"); 
@@ -77,7 +84,7 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         else if (lineNumber === 31) {
             console.log("max tasks reached"); 
         }
-    }, [lineNumber]); 
+    }, [lineNumber]); Delete right after inspection, pretty sure its useless*/
 
     useEffect(() => {
 
@@ -121,19 +128,32 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         //console.log(`page-line-break-${lineNumber}`); 
         const storedToDoInfo = sessionStorage.getItem('todoInfo'); 
         const info = JSON.parse(storedToDoInfo); 
-
+        //console.log(info); 
         if (storedToDoInfo) {
-            updateToDoList(info.taskHeading, info.fromDate, info.toDate, info.urgencyLevel, lineNumber);
+            updateToDoList(info.taskId, info.taskHeading, info.fromDate, info.toDate, info.urgencyLevel, lineNumber);
             setLineNumber(prev => prev + 1);  //CHECK HERE IF BUG LOADING the tasks 
+            sessionStorage.removeItem('todoInfo'); 
+        } else {
+            const pages = document.querySelectorAll('.page-line-break'); 
+            pages.forEach(page => {
+                if (page.children.length > 0) { 
+                    page.textContent = ''; 
+                    page.style.removeProperty('background-color');  
+                }
+            }); 
+            setLineNumber(1); 
+            setTaskNum(0); 
+
+            handleFormUpdate("Task deleted successfully!");
         }
-        sessionStorage.removeItem('todoInfo'); 
+
         //use querySelector to grab all line elements 
         //grab info out from session storage
         //grab the innerHTML and add the necessary elements with db info
         //document.querySelectorAll
     }
 
-    const updateToDoList = (taskName, fromDate, toDate, urgencyLevel, lineNumber) => {
+    const updateToDoList = (taskId, taskName, fromDate, toDate, urgencyLevel, lineNumber) => {
         console.log(taskName); 
         const calculateDays = !fromDate; 
         let dayDiff; 
@@ -183,13 +203,14 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
             checkbox.addEventListener('click', handleCheckClick); 
 
             lineRows.innerHTML = `
-                <div class="task-description-layout">
+                <div class="task-description-layout" data-id="${taskId}">
                     <div class="task-heading">
                         <h1>${taskName}</h1>
                     </div>
                     <img src=${chevronDown} id="chevron-down-icon" aria-hidden="true"></img>
                     <button id="edit-task-btn">Edit</button>
-                    <h3 class="visual-task-date" style="color: ${textColour};">${calculateDays ? `${dayMsg}` : `${fromDate} to ${toDate}`} </h3>  
+                    <h3 class="visual-task-date" style="color: ${textColour};">${calculateDays ? `${dayMsg}` : `${fromDate} to ${toDate}`} </h3>
+                    <hr class="cross-out-line"></hr>
                 </div>
                 
             `; 
@@ -201,9 +222,9 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         //console.log("The data retrieved: " + data); 
         let currLineNumber = lineNumber; 
         for (const task of data) {
-            console.log(task); 
-            const { taskName, description, fromDate, toDate, urgency, completed } = task; 
-            updateToDoList(taskName, fromDate, toDate, urgency, currLineNumber); 
+            //console.log(task); 
+            const { _id: taskId, taskName, description, fromDate, toDate, urgency, completed } = task; 
+            updateToDoList(taskId, taskName, fromDate, toDate, urgency, currLineNumber); 
             currLineNumber += 1; 
         }
         setLineNumber(currLineNumber); 
@@ -215,7 +236,7 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         pageFlip.volume = 0.5; 
         if (pageFlip.paused) { 
             pageFlip.play();
-            console.log("Sound played"); 
+            //console.log("Sound played"); 
         }
 
         setPage(prev => prev === 1 ? 1 : prev - 1); 
@@ -227,36 +248,63 @@ function BookHalfOpen({updateBook, userId} : BookHalfOpenProps) {
         pageFlip.volume = 0.5; 
         if (pageFlip.paused) { 
             pageFlip.play();
-            console.log("Sound played"); 
+            //console.log("Sound played"); 
         }
         setPage(prev => prev === 3 ? 3 : prev + 1); 
     }
 
     const handleCheckClick = (e) => {
-        if (e.target.checked)
+        if (e.target.checked) { 
+            const parent = e.currentTarget.closest('.page-line-break');  
+            const taskContainer = parent.querySelector('.task-description-layout'); 
+            taskContainer.style.opacity = 0.5; 
+            const line = parent.querySelector('.cross-out-line'); 
+            line.classList.remove('close'); 
+            line.classList.add('open'); 
+            line.style.display = "block"; 
+            const checkSfx = new Audio(checkOffSfx); 
+            checkSfx.volume = 0.5; 
+            checkSfx.length
+            if (checkSfx.paused)
+                checkSfx.play();
+
             setTaskNum(prev => prev + 1); 
-        else 
+        }
+        else { 
+            const parent = e.currentTarget.closest('.page-line-break');  
+            const taskContainer = parent.querySelector('.task-description-layout'); 
+            taskContainer.style.opacity = 1; 
+            const line = parent.querySelector('.cross-out-line'); 
+            line.classList.remove('open'); 
+            line.classList.add('close'); 
+            line.style.display ="none"; 
             setTaskNum(prev => prev - 1); 
-        console.log("RUNNING!"); 
+
+        }
+        //console.log("RUNNING!"); 
     }
 
     useEffect(() => {
-        if (taskNum >= 1)
+        if (taskNum >= 1 && showTaskPopup)
             handleFormUpdate(); 
-        else if (taskNum === 0) {
+        else if (taskNum === 0 || !showTaskPopup) {
             const updateContainer = document.getElementById('save-update-container'); 
             updateContainer.style.display = 'none'; 
         }
-            
-            
-    }, [taskNum]); 
+    }, [taskNum, showTaskPopup]); 
 
-    const handleFormUpdate = () => {
+    const handleFormUpdate = (msg) => {
         const updateContainer = document.getElementById('save-update-container'); 
         const updateText = document.getElementById('save-update-text'); 
-        updateContainer.style.backgroundColor = 'orange'; 
-        updateContainer.style.display = 'flex'; 
-        updateText.innerHTML = `Are you sure you want to check off <span id="task-number" style="color: black">${taskNum}</span> task(s)?`; 
+        if (msg) {
+            updateContainer.style.backgroundColor = 'green'; 
+            updateContainer.style.display = 'flex'; 
+            updateText.innerHTML = msg; 
+        } else { 
+            updateContainer.style.backgroundColor = 'orange'; 
+            updateContainer.style.display = 'flex'; 
+            updateText.innerHTML = `Are you sure you want to check off <span id="task-number" style="color: black">${taskNum}</span> task(s)?`; 
+        }
     }
     return (
         <>
