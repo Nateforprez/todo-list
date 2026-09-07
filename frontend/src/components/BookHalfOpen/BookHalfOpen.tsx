@@ -4,6 +4,7 @@ import chevronDown from '../../assets/chevron-down-solid-full.svg';
 import leftPoint from '../../assets/hand-point-left-solid-full.svg'; 
 import rightPoint from '../../assets/hand-point-right-solid-full.svg'; 
 import pageFlipAudio from '../../assets/page-flip-sound.mp3'; 
+import checkOffSfx from '../../assets/cross-out-sfx.mp3'; 
 
 interface BookHalfOpenProps {
     updateBook: boolean, 
@@ -261,6 +262,12 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             line.classList.remove('close'); 
             line.classList.add('open'); 
             line.style.display = "block"; 
+            const checkSfx = new Audio(checkOffSfx); 
+            checkSfx.volume = 0.5; 
+            checkSfx.length
+            if (checkSfx.paused)
+                checkSfx.play();
+
             setTaskNum(prev => prev + 1); 
         }
         else { 
