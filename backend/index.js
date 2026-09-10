@@ -200,6 +200,22 @@ app.get('/api/get/todo-info', async (req, res) => { //: means to treat the dyana
 
 }); 
 
+app.get('/api/get/task', async (req, res) => {
+  const id = req.query.taskId; 
+  try {
+    const task = await taskInfo.findById(id); 
+    if (task) {
+      console.log(task.taskName); 
+      return res.json({success: "Task retrieved successfully!", info: task}); 
+    }
+  } catch(err) {
+    console.log(err); 
+    return res.status(400).json({error: "Error retrieving user task info"}); 
+  }
+  return res.status(500).json({error: "internal server error"}); 
+
+}); 
+
 app.delete('/api/delete/todo-info', async (req, res) => {
   const { taskIds } = req.body; 
   console.log(taskIds)

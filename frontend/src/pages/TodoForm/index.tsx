@@ -256,11 +256,13 @@ function TodoForm() {
                         <img id="x-mark" className="x-icon" src={xMark} aria-hidden="true"></img>
                     </button>
                 </div>
-                <h1 style={{textAlign: "center"}}>Hello {username}!</h1>
+                <h1 style={{textAlign: "center"}}>Hello {username}</h1>
                 <div id="todo-list-form">
                     <BookHalfOpen updateBook={updateVisuals} userId={userId} showTaskPopup={updateTaskPopup}/> 
-                    <button className="task-btn" id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
-                    <button className="task-btn" id="delete-task-btn" onClick={handleDeleteTaskBtn}>delete task...</button>
+                    <div id="task-btn-selection">
+                        <button className="task-btn" id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
+                        <button className="task-btn" id="delete-task-btn" onClick={handleDeleteTaskBtn}>delete task...</button>
+                    </div>
                     <form action="/api/submit/todo-info" method="POST" id="todo-form" className="pop-up" style={{display: 'none'}} onSubmit={handleFormSubmission}>
                         <div id="todo-form-container">
                             <button id="return-btn" type="button" onClick={handleReturnClick}>

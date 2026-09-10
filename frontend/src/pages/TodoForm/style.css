@@ -5,12 +5,19 @@
     display: flex; 
     flex-direction: row; 
     justify-content: center;
-    column-gap: 20px;
+    column-gap: 40px;
 }
 #todo-form {
     /* background-color: rgb(237, 229, 218); 
     border: 1px solid red; */
     width: 45%;
+}
+#task-btn-selection {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;; 
+    row-gap: 10px;
+    height: 600px;
 }
 .task-btn {
     width: 200px;
