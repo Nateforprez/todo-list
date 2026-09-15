@@ -5,6 +5,7 @@ import leftPoint from '../../assets/hand-point-left-solid-full.svg';
 import rightPoint from '../../assets/hand-point-right-solid-full.svg'; 
 import pageFlipAudio from '../../assets/page-flip-sound.mp3'; 
 import checkOffSfx from '../../assets/cross-out-sfx.mp3'; 
+import returnArrow from '../../assets/arrow-return.svg'; 
 
 interface BookHalfOpenProps {
     updateBook: boolean, 
@@ -146,7 +147,8 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         const info = JSON.parse(storedToDoInfo); 
         //console.log(info); 
         if (storedToDoInfo) {
-            updateToDoList(info.taskId, info.taskHeading, info.fromDate, info.toDate, info.urgencyLevel, lineNumber);
+            const {taskId, taskHeading, fromDate, toDate, urgencyLevel } = info; 
+            updateToDoList(taskId, taskHeading, fromDate, toDate, urgencyLevel, lineNumber);
             setLineNumber(prev => prev + 1);  //CHECK HERE IF BUG LOADING the tasks 
             sessionStorage.removeItem('todoInfo'); 
         } else {
@@ -326,9 +328,12 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             line.style.display = "block"; 
             const checkSfx = new Audio(checkOffSfx); 
             checkSfx.volume = 0.5; 
-            checkSfx.length
+            //checkSfx.length
             if (checkSfx.paused)
                 checkSfx.play();
+
+            const id = taskContainer.getAttribute('data-id'); 
+            checkOffTask(id);
 
             setTaskNum(prev => prev + 1); 
         }
@@ -340,10 +345,36 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             line.classList.remove('open'); 
             line.classList.add('close'); 
             line.style.display ="none"; 
+
+            const id = taskContainer.getAttribute('data-id'); 
+            checkOffTask(id);
+
             setTaskNum(prev => prev - 1); 
 
         }
         //console.log("RUNNING!"); 
+    }
+
+    const checkOffTask = async(id) => {
+        try {
+            const response = await fetch('/api/submit/checked', {
+                method: 'PATCH', 
+                headers: {
+                    'Content-type': 'application/json'
+                }, 
+                body: JSON.stringify({
+                    taskId: id
+                })
+            }); 
+
+            const data = await response.json();
+            
+            if (response.ok) 
+                console.log(data.success); 
+        } catch (err) {
+            console.log(err); 
+        }
+
     }
     
 
@@ -361,8 +392,30 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             updateText.innerHTML = `Are you sure you want to check off <span class="task-number" style="color: black">${taskNum}</span> task(s)?`; 
         }
     }
-    const {textColour, dayMsg} = calculateDays(taskDetails.from, taskDetails.to); 
+    const getUrgencyColour = (urgency) => {
+        let colour; 
+        switch(urgency) {
+            case 'low':
+                colour = 'rgb(82, 102, 108)'; 
+                break; 
+            case 'middle': 
+                colour = 'rgb(116, 148, 108)'; 
+                break; 
+            case 'high': 
+                colour = 'rgb(142, 30, 5)'; 
+                break; 
+            default: 
+                colour = 'black'; 
+        }
+        return colour; 
+    }
 
+    const handleReturnClick = (e) => {
+        setPage(1); 
+    }
+
+    const {textColour, dayMsg} = calculateDays(taskDetails.from, taskDetails.to); 
+    const urgencyColour = getUrgencyColour(taskDetails.urgency); 
     return (
         
         <>
@@ -407,11 +460,18 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
                                 <div className="page-line-break" id="page-line-break-24"></div>
                                 <div className="page-line-break" id="page-line-break-25"></div>
                             </div>
-                            <div className="page view-task-page" id="view-task-details" style={{display: 'none'}}>
-                                <h1 className="task-text task-title">{taskDetails.title}</h1>
-                                <h2 className="task-text task-urgency-level">Urgency: {taskDetails.urgency}</h2>
-                                <h2 className="task-text task-due-date" style={{color: textColour}}><span style={{color: 'black'}}>Due Date:</span> {dayMsg}</h2>
-                                <h2 className="task-text task-status">Status: {taskDetails.status ? 'Completed' : 'Not Done'}</h2>
+                            <div className="page" id="view-task-details" style={{display: 'none'}}>
+                                <div className="view-task-header">
+                                    <button id="return-btn" type="button" onClick={handleReturnClick}>
+                                        <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                                    </button>
+                                    <h1 className="task-text task-title">{taskDetails.title}</h1>
+                                </div>
+                                <div className="view-task-attributes">
+                                    <h2 className="task-text task-urgency-level">Urgency: <span style={{color: urgencyColour}}>{taskDetails.urgency}</span></h2>
+                                    <h2 className="task-text task-due-date" style={{color: textColour}}><span style={{color: 'black'}}>Due Date:</span> {dayMsg}</h2>
+                                    <h2 className="task-text task-status">Status: <span style={{color: taskDetails.status ? 'green' : 'red'}}>{taskDetails.status ? 'Completed' : 'Not Done'}</span></h2>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -465,8 +525,13 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
                                 <div className="page-line-break" id="page-line-break-29"></div>
                                 <div className="page-line-break" id="page-line-break-30"></div>
                             </div>
-                            <div className="page view-task-page" id="view-task-description" style={{display: 'none'}}>
-                                <h2 className="task-description">Task Description: {taskDetails.description}</h2>
+                            <div className="page" id="view-task-description" style={{display: 'none'}}>
+                                <div className="view-task-header" id="description-header">
+                                    <h1 className="task-text task-title">Task Description</h1>
+                                </div>
+                                <div className="view-task-attributes">
+                                    <h2 className="task-description">{taskDetails.description}</h2>
+                                </div>
                             </div>
                         </div>
                     </div>

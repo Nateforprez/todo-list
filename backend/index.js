@@ -230,6 +230,18 @@ app.delete('/api/delete/todo-info', async (req, res) => {
   }
 }); 
 
+app.patch('/api/submit/checked', async(req, res) => {
+  const { taskId: id } = req.body; 
+  try {
+    const task = await taskInfo.findById(id); 
+    const result = await taskInfo.findByIdAndUpdate(id, {completed: !task.completed}); 
+    console.log(result); 
+    res.json({success: 'Task successfully checked!'}); 
+  } catch (err) {
+    res.status(500).json({error: 'INTERNAL SERVER ERROR'}); 
+  }
+}); 
+
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
