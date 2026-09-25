@@ -67,13 +67,13 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
 
     }, []); 
 
-    /* Update Book when there are changes in Task */
+    /* Update Book when there are changes in Task, handles present task changes (e.g. a user submits a task) */
     useEffect(() => {
         //console.log("Handling update..."); 
         handleUpdateBookChange();
     }, [updateBook])
 
-    /* When userId is recieved fetch tasks */
+    /* When userId is recieved fetch tasks (used when this component is initially loaded and user id is supplied) */
     useEffect(() => {
         if (userId) { 
             fetchTasks(); 
@@ -205,7 +205,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         return {textColour: textColour, dayMsg: dayMsg}; 
     }
     /* add task data as elements to the book */
-    const updateToDoList = (taskId, taskName, fromDate, toDate, urgencyLevel, lineNumber) => {
+    const updateToDoList = (taskId, taskName, fromDate, toDate, urgencyLevel, lineNumber, completed) => {
         const calcDays = !fromDate; 
         const { textColour, dayMsg } = calculateDays(fromDate, toDate) 
         const lineRows = document.getElementById(`page-line-break-${lineNumber}`); 
@@ -240,6 +240,13 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             `; 
             lineRows.appendChild(checkbox); 
             lineRows.querySelector('#view-task-btn').addEventListener('click', handleTaskViewClick); 
+
+            if (completed) { 
+                checkbox.checked = true; 
+                const parent = checkbox.closest('.page-line-break'); 
+                const taskContainer = parent.querySelector('.task-description-layout');
+                checkOffTaskDisplay(parent, taskContainer);
+            }
         }
     }
 
@@ -249,7 +256,9 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
         let currLineNumber = lineNumber; 
         for (const task of data) {
             const { _id: taskId, taskName, description: taskDescription, fromDate, toDate, urgency: taskUrgency, completed } = task; 
-            updateToDoList(taskId, taskName, fromDate, toDate, taskUrgency, currLineNumber); 
+            if (completed)
+                console.log("Completed: " + taskName); 
+            updateToDoList(taskId, taskName, fromDate, toDate, taskUrgency, currLineNumber, completed); 
             currLineNumber += 1; 
         }
         setLineNumber(currLineNumber); 
@@ -319,9 +328,22 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
     /* handle when the check input element is clicked */
     const handleCheckClick = (e) => {
         if (e.target.checked) { 
+            //change the code under here 
             const parent = e.currentTarget.closest('.page-line-break');  
             const taskContainer = parent.querySelector('.task-description-layout'); 
-            taskContainer.style.opacity = 0.5; 
+            checkOffTaskDisplay(parent, taskContainer); 
+            
+            const checkSfx = new Audio(checkOffSfx); 
+            checkSfx.volume = 0.5; 
+            //checkSfx.length
+            if (checkSfx.paused)
+                checkSfx.play();
+
+
+            const id = taskContainer.getAttribute('data-id'); 
+            checkOffTask(id); 
+
+            /*taskContainer.style.opacity = 0.5; 
             const line = parent.querySelector('.cross-out-line'); 
             line.classList.remove('close'); 
             line.classList.add('open'); 
@@ -333,9 +355,11 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
                 checkSfx.play();
 
             const id = taskContainer.getAttribute('data-id'); 
-            checkOffTask(id);
+            checkOffTask(id); 
 
             setTaskNum(prev => prev + 1); 
+*/
+
         }
         else { 
             const parent = e.currentTarget.closest('.page-line-break');  
@@ -353,6 +377,16 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
 
         }
         //console.log("RUNNING!"); 
+    }
+
+    const checkOffTaskDisplay = (parent, taskContainer) => {
+        taskContainer.style.opacity = 0.5; 
+        const line = parent.querySelector('.cross-out-line'); 
+        line.classList.remove('close'); 
+        line.classList.add('open'); 
+        line.style.display = "block"; 
+
+        setTaskNum(prev => prev + 1); 
     }
 
     const checkOffTask = async(id) => {
