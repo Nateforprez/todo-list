@@ -294,7 +294,7 @@ h1 h2 h3 {
 .point-icon:hover { 
     filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
 }
-#task-number {
+.task-number {
     font-family: var(--font-general);
     font-weight: bold;
     font-size: 1.1em;
@@ -308,4 +308,75 @@ h1 h2 h3 {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Adjust 0.4 for darkness */
     display: none; 
+}
+#view-task-btn {
+    background: none; 
+    border: none; 
+    display: inline-flex; 
+    padding: 0; 
+    cursor: pointer; 
+}
+#view-task-btn:hover {
+    filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
+}
+
+/* Task Styling */
+.task-title {
+    text-decoration: underline; 
+}
+.view-task-header {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+#description-header {
+    height: 20%;
+    align-items: center;
+}
+.view-task-attributes {
+    width: 100%;
+    height: 80%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 20px;
+}
+#return-btn {
+    background: none; 
+    border: none; 
+    padding: 0; 
+    display: inline-flex; 
+    width: 30px;
+    height: 40px;
+
+    position: absolute; 
+    top: 20px;
+    left: 30px;
+    rotate: 90deg;
+}
+#return-arrow-img:hover {
+    filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
+}
+#view-task-details {
+    height: 97%; 
+    width: 100%; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+
+
+    background-color: white;  
+}
+#view-task-description {
+    height: 97%; 
+    width: 100%; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+
+
+    background-color: white;  
 }

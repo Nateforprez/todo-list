@@ -200,6 +200,22 @@ app.get('/api/get/todo-info', async (req, res) => { //: means to treat the dyana
 
 }); 
 
+app.get('/api/get/task', async (req, res) => {
+  const id = req.query.taskId; 
+  try {
+    const task = await taskInfo.findById(id); 
+    if (task) {
+      console.log(task.taskName); 
+      return res.json({success: "Task retrieved successfully!", info: task}); 
+    }
+  } catch(err) {
+    console.log(err); 
+    return res.status(400).json({error: "Error retrieving user task info"}); 
+  }
+  return res.status(500).json({error: "internal server error"}); 
+
+}); 
+
 app.delete('/api/delete/todo-info', async (req, res) => {
   const { taskIds } = req.body; 
   console.log(taskIds)
@@ -211,6 +227,18 @@ app.delete('/api/delete/todo-info', async (req, res) => {
   } catch (err) {
     console.log(err); 
     res.status(500).json({error: err}); 
+  }
+}); 
+
+app.patch('/api/submit/checked', async(req, res) => {
+  const { taskId: id } = req.body; 
+  try {
+    const task = await taskInfo.findById(id); 
+    const result = await taskInfo.findByIdAndUpdate(id, {completed: !task.completed}); 
+    console.log(result); 
+    res.json({success: 'Task successfully checked!'}); 
+  } catch (err) {
+    res.status(500).json({error: 'INTERNAL SERVER ERROR'}); 
   }
 }); 
 
