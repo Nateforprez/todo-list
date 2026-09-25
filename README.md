@@ -2,7 +2,7 @@ TODO LIST (Task Management Web App)
 
 DESCRIPTION
 ----------- 
-A full stacak task management web application that supports user account creation and manage daily workflows. Similar to a Todo list, users are able to add up 
+A full stack task management web application that supports user account creation and manage daily workflows. Similar to a Todo list, users are able to add up 
 to 30 tasks with unique attributes of there choosing, filter by urgency, and check off tasks. 
 
 FEATURES
