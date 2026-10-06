@@ -5,7 +5,7 @@
     display: flex; 
     flex-direction: row; 
     justify-content: center;
-    column-gap: 40px;
+    column-gap: 30px;
 }
 #todo-form {
     /* background-color: rgb(237, 229, 218); 
@@ -29,17 +29,30 @@
     background-color: rgb(10, 199, 10); 
     color: white;
 }
+#filter-task-btn {
+    background-color: rgb(230, 167, 29); 
+    color: rgb(125, 60, 2); 
+}
 #delete-task-btn {
     background-color: red; 
     color: black;
 }
 #confirm-delete-task-btn {
+    width: 200px;
+    height: 50px;
+    font-family: var(--font-general); 
+    font-size: 1em;
     background-color: red; 
     color: black; 
 }
 #add-task-btn:hover {
     border: 2px solid rgb(49, 49, 246); 
     color: black;
+    cursor: pointer; 
+}
+#filter-task-btn:hover {
+    border: 2px solid rgb(49, 49, 246); 
+    color: white; 
     cursor: pointer; 
 }
 #delete-task-btn:hover {
@@ -179,6 +192,9 @@
     align-items: center;
     position: relative; 
 }
+#delete-task-container h2 {
+    margin-top: 80px;
+}
 @media (max-width: 900px) {
     #todo-list-form {
         display: flex; 
@@ -187,10 +203,20 @@
         flex-wrap: wrap; 
         column-gap: 20px;
     }
+    #task-btn-selection {
+        height: 200px;
+    }
     #todo-form {
         width: 80%;
     }
     #delete-task-container {
         width: 80%;
+    }
+    #task-btn-selection {
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        column-gap: 40px;
     }
 }

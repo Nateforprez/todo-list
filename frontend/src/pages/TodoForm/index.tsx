@@ -20,35 +20,40 @@ function TodoForm() {
         }
     }, []);  
 
-    function handleAddTaskBtn(event) {
-        if (event.currentTarget.id === "add-task-btn") {
-            event.currentTarget.style.display = 'none'; 
-            const deleteBtn = document.getElementById('delete-task-btn'); 
-            deleteBtn.style.display = "none"; 
-            const todoForm = document.getElementById('todo-form'); 
-            todoForm.style.display = 'block'; 
-        }
-    }
-    const handleDeleteTaskBtn = (e) => {
-        e.currentTarget.style.display = 'none'; 
-        const addTaskBtn = document.getElementById('add-task-btn'); 
-        addTaskBtn.style.display = "none"; 
-        const container = document.getElementById('delete-task-container'); 
-        container.style.display = "flex"; 
 
-        setTaskPopup(true); 
-        if (e.currentTarget.id === "delete-task-btn") {
-            console.log("Delete btn pressed"); 
+    const handleTaskBtn = (event) => {
+        
+        document.querySelectorAll('.task-btn').forEach(btn => {
+            btn.style.display = 'none'; 
+        }); 
+        event.currentTarget.closest('#task-btn-selection').style.display = 'none'; 
+
+        switch(event.currentTarget.id) {
+            case 'add-task-btn': 
+                const todoForm = document.getElementById('todo-form'); 
+                todoForm.style.display = 'block'; 
+                break; 
+            case 'delete-task-btn': 
+                const container = document.getElementById('delete-task-container'); 
+                container.style.display = "flex"; 
+                setTaskPopup(true);   
+                break; 
+            case 'filter-task-btn': 
+                console.log("clicked"); 
+                break; 
+            default: 
+                break; 
         }
+
     }
 
     const handleReturnClick = (e) => {
         const parent = e.currentTarget.closest(".pop-up"); 
         parent.style.display = "none"; 
-        const deleteBtn = document.getElementById('delete-task-btn'); 
-        deleteBtn.style.display = "block"; 
-        const addTaskBtn = document.getElementById('add-task-btn'); 
-        addTaskBtn.style.display = "block"; 
+        document.getElementById('task-btn-selection').style.display = 'flex'; 
+        document.querySelectorAll('.task-btn').forEach(btn => {
+            btn.style.display = 'block'; 
+        }); 
         setTaskPopup(false);
     }
     
@@ -260,8 +265,9 @@ function TodoForm() {
                 <div id="todo-list-form">
                     <BookHalfOpen updateBook={updateVisuals} userId={userId} showTaskPopup={updateTaskPopup}/> 
                     <div id="task-btn-selection">
-                        <button className="task-btn" id="add-task-btn" onClick={handleAddTaskBtn}>add task...</button>
-                        <button className="task-btn" id="delete-task-btn" onClick={handleDeleteTaskBtn}>delete task...</button>
+                        <button className="task-btn" id="add-task-btn" onClick={handleTaskBtn}>add task...</button>
+                        <button className="task-btn" id="filter-task-btn" onClick={handleTaskBtn}>filter tasks...</button>
+                        <button className="task-btn" id="delete-task-btn" onClick={handleTaskBtn}>delete task...</button>
                     </div>
                     <form action="/api/submit/todo-info" method="POST" id="todo-form" className="pop-up" style={{display: 'none'}} onSubmit={handleFormSubmission}>
                         <div id="todo-form-container">
@@ -305,7 +311,7 @@ function TodoForm() {
                             <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
                         </button>
                         <h2>Check off the tasks you want to delete: </h2>
-                        <button className="task-btn" id="confirm-delete-task-btn" onClick={confirmDeleteTask}>delete</button>
+                        <button className="delete-btn" id="confirm-delete-task-btn" onClick={confirmDeleteTask}>delete</button>
                     </div>
                 </div>
             </div>
