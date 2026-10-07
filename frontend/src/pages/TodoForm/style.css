@@ -184,16 +184,43 @@
 #return-arrow-img:hover {
     filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
 }
-#delete-task-container {
-    width: 45%; 
 
+.pop-up-container {
+    width: 45%; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative; 
+    position: relative;
+}
+#filter-task-container {
+    justify-content: center; 
+    align-items: center;
+}
+#filter-task-container h2 {
+    margin-left: 20px;
+}
+#filter-selection-container {
+    width: 80%;
+}
+.filter-attributes h2 {
+    width: 80%;
+    color: rgb(64, 56, 43);
+}
+.filter-check-box {
+    width: 25px;
+    height: 25px;
 }
 #delete-task-container h2 {
     margin-top: 80px;
+}
+#filter-by-text {
+    background-color: white; 
+}
+.filter-attributes {
+    background-color: rgb(177, 164, 146);
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
 }
 @media (max-width: 900px) {
     #todo-list-form {

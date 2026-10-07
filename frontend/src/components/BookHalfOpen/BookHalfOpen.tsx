@@ -303,6 +303,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
     /* handle left btn click */
     const handleLeftBtnClick = (e) => {
         //console.log("Left btn clicked!"); 
+        e.preventDefault();
         const pageFlip = new Audio(pageFlipAudio); 
         pageFlip.volume = 0.1; 
         if (pageFlip.paused) { 
@@ -315,7 +316,8 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
 
     /* handle Right btn click */
     const handleRightBtnClick = (e) => {
-        //console.log("Right btn clicked!"); 
+        //console.log("Right btn clicked!");
+        e.preventDefault(); 
         const pageFlip = new Audio(pageFlipAudio); 
         pageFlip.volume = 0.1; 
         if (pageFlip.paused) { 
@@ -339,29 +341,9 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             if (checkSfx.paused)
                 checkSfx.play();
 
-
             const id = taskContainer.getAttribute('data-id'); 
             checkOffTask(id); 
-
-            /*taskContainer.style.opacity = 0.5; 
-            const line = parent.querySelector('.cross-out-line'); 
-            line.classList.remove('close'); 
-            line.classList.add('open'); 
-            line.style.display = "block"; 
-            const checkSfx = new Audio(checkOffSfx); 
-            checkSfx.volume = 0.5; 
-            //checkSfx.length
-            if (checkSfx.paused)
-                checkSfx.play();
-
-            const id = taskContainer.getAttribute('data-id'); 
-            checkOffTask(id); 
-
-            setTaskNum(prev => prev + 1); 
-*/
-
-        }
-        else { 
+        } else { 
             const parent = e.currentTarget.closest('.page-line-break');  
             const taskContainer = parent.querySelector('.task-description-layout'); 
             taskContainer.style.opacity = 1; 
@@ -374,9 +356,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
             checkOffTask(id);
 
             setTaskNum(prev => prev - 1); 
-
         }
-        //console.log("RUNNING!"); 
     }
 
     const checkOffTaskDisplay = (parent, taskContainer) => {
@@ -497,7 +477,7 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
                             <div className="page" id="view-task-details" style={{display: 'none'}}>
                                 <div className="view-task-header">
                                     <button id="return-btn" type="button" onClick={handleReturnClick}>
-                                        <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                                        <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return" draggable="false"></img>
                                     </button>
                                     <h1 className="task-text task-title">{taskDetails.title}</h1>
                                 </div>
@@ -573,10 +553,10 @@ function BookHalfOpen({updateBook, userId, showTaskPopup} : BookHalfOpenProps) {
                 
                 <div className="navigate-pages">
                     <button className="nav-btn" id="nav-left-btn" onClick={handleLeftBtnClick}>
-                        <img src={leftPoint} aria-hidden={true} className="point-icon"></img>
+                        <img src={leftPoint} aria-hidden={true} className="point-icon" draggable="false"></img>
                     </button>
                     <button className="nav-btn" id="nav-right-btn" onClick={handleRightBtnClick}>
-                        <img src={rightPoint} aria-hidden={true} className="point-icon"></img>
+                        <img src={rightPoint} aria-hidden={true} className="point-icon" draggable="false"></img>
                     </button>
                 </div>
 

@@ -39,6 +39,8 @@ function TodoForm() {
                 setTaskPopup(true);   
                 break; 
             case 'filter-task-btn': 
+                const filterContainer = document.getElementById('filter-task-container'); 
+                filterContainer.style.display = 'flex'; 
                 console.log("clicked"); 
                 break; 
             default: 
@@ -193,6 +195,18 @@ function TodoForm() {
         }
     }
 
+    const handleFilterCheck = (event) => {
+        const currCheckbox = event.target; 
+        const parent = currCheckbox.closest('.filter-attributes'); 
+        if (currCheckbox.checked) { 
+            parent.querySelector('h2').style.color = 'green'; 
+
+        } else {
+            parent.querySelector('h2').style.color = "rgb(64, 56, 43)";
+            currCheckbox.checked = false; 
+        }
+    }
+
     const handleFromDateCheck = (date) => {
         const currentDate = new Date(); 
         currentDate.setHours(0, 0, 0, 0); 
@@ -272,7 +286,7 @@ function TodoForm() {
                     <form action="/api/submit/todo-info" method="POST" id="todo-form" className="pop-up" style={{display: 'none'}} onSubmit={handleFormSubmission}>
                         <div id="todo-form-container">
                             <button id="return-btn" type="button" onClick={handleReturnClick}>
-                                <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                                <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return" draggable="false"></img>
                             </button>
                             <h2>Task Name</h2>
                             <label htmlFor="taskHeading"/>
@@ -306,9 +320,29 @@ function TodoForm() {
                             <button type="submit" id="submit-form-btn">Submit</button>
                         </div>
                     </form>
-                    <div id="delete-task-container" className="pop-up" style={{display: 'none'}}>
+                    <div id="filter-task-container" className="pop-up pop-up-container" style={{display: 'none'}}>
                         <button id="return-btn" type="button" onClick={handleReturnClick}>
-                            <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return"></img>
+                            <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return" draggable="false"></img>
+                        </button>
+                        <div id="filter-selection-container">
+                            <div id="filter-by-text"><h2>Filter By: </h2></div>
+                            <div className="filter-attributes">
+                                <h2>Status</h2>
+                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high" onClick={handleFilterCheck}></input>
+                            </div>
+                            <div className="filter-attributes">
+                                <h2>Due Date</h2>
+                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high"></input>
+                            </div>
+                            <div className="filter-attributes">
+                                <h2>Urgency</h2>
+                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="delete-task-container" className="pop-up pop-up-container" style={{display: 'none'}}>
+                        <button id="return-btn" type="button" onClick={handleReturnClick}>
+                            <img id="return-arrow-img" src={returnArrow} aria-hidden={true} alt="return" draggable="false"></img>
                         </button>
                         <h2>Check off the tasks you want to delete: </h2>
                         <button className="delete-btn" id="confirm-delete-task-btn" onClick={confirmDeleteTask}>delete</button>
