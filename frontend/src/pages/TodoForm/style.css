@@ -185,6 +185,31 @@
     filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(174deg) brightness(97%) contrast(93%); 
 }
 
+.filter-btn {
+    background: none; 
+    border: none; 
+    padding: 0; 
+    display: inline-flex; 
+    width: 30px;
+    height: 30px;
+}
+.filter-btn:hover {
+    cursor: pointer;
+    /*     filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(105deg) brightness(97%) contrast(93%); */
+}
+.filter-btn-desc:hover {
+    filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%);
+}
+.filter-btn-asce:hover {
+    filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(105deg) brightness(97%) contrast(93%);
+}
+.green-filter {
+    filter: invert(88%) sepia(21%) saturate(1915%) hue-rotate(105deg) brightness(97%) contrast(93%);
+}
+.red-filter {
+    filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%);
+}
+
 .pop-up-container {
     width: 45%; 
     display: flex;
@@ -203,12 +228,24 @@
     width: 80%;
 }
 .filter-attributes h2 {
-    width: 80%;
+    width: 50%;
+    margin-right: 20px;
     color: rgb(64, 56, 43);
+}
+.filter-label-container {
+    width: 50%;
+
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: flex-start;
+    column-gap: 5px;
 }
 .filter-check-box {
     width: 25px;
     height: 25px;
+    margin-left: auto;
+    margin-right: 20px;
 }
 #delete-task-container h2 {
     margin-top: 80px;
@@ -245,5 +282,12 @@
         flex-direction: row;
         align-items: center;
         column-gap: 40px;
+    }
+    .filter-label-container {
+        width: 70%;
+    } 
+    #return-btn {
+        left: 1px;
+        top: 15px;
     }
 }

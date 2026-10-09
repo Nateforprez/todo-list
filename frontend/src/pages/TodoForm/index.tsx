@@ -3,6 +3,8 @@ import BookHalfOpen from '../../components/BookHalfOpen/BookHalfOpen'
 import { useEffect, useState } from 'react';
 import xMark from '../../assets/x-solid-full.svg'; 
 import returnArrow from '../../assets/arrow-return.svg'; 
+import ascendingArrow from '../../assets/arrow-up-ascending-order-solid-full.svg'; 
+import descendingArrow from '../../assets/arrow-down-descending-order-solid-full.svg'; 
 
 function TodoForm() {
 
@@ -10,6 +12,8 @@ function TodoForm() {
     const [ userId, setUserId ] = useState(""); 
     const [ updateVisuals, setUpdateVisuals ] = useState<boolean>(false); 
     const [updateTaskPopup, setTaskPopup] = useState<boolean>(false); 
+    const filterGreen = 'invert(88%) sepia(21%) saturate(1915%) hue-rotate(105deg) brightness(97%) contrast(93%)'; 
+    const filterRed = 'invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%)'; 
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user'); 
@@ -260,6 +264,22 @@ function TodoForm() {
             handleDeletionUpdated("Please select task(s) to delete."); 
     }
 
+    const handleFilterOrderClick = (e) => {
+        console.log('Clicked!');
+        if (e.currentTarget.classList.contains('filter-btn-asce')) {
+            if (!e.currentTarget.classList.contains('green-filter')) 
+                e.currentTarget.classList.add('green-filter'); 
+            else
+                e.currentTarget.classList.remove('green-filter'); 
+        }
+        else if (e.currentTarget.classList.contains('filter-btn-desc')) {
+            if (!e.currentTarget.classList.contains('red-filter')) 
+                e.currentTarget.classList.add('red-filter'); 
+            else
+                e.currentTarget.classList.remove('red-filter'); 
+        }
+    }
+
     return (
         <>
             <div id="todo-form-parent-container">
@@ -327,16 +347,40 @@ function TodoForm() {
                         <div id="filter-selection-container">
                             <div id="filter-by-text"><h2>Filter By: </h2></div>
                             <div className="filter-attributes">
-                                <h2>Status</h2>
+                                <div className="filter-label-container">
+                                    <h2>Status</h2>
+                                    <button className="filter-btn filter-btn-desc" id="filter-btn-descending" type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={descendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                    <button className="filter-btn filter-btn-asce" id="filter-btn-ascending"type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={ascendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                </div>
                                 <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high" onClick={handleFilterCheck}></input>
                             </div>
                             <div className="filter-attributes">
-                                <h2>Due Date</h2>
-                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high"></input>
+                                <div className="filter-label-container">
+                                    <h2>Due Date</h2>
+                                    <button className="filter-btn filter-btn-desc" id="filter-btn-descending" type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={descendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                    <button className="filter-btn filter-btn-asce" id="filter-btn-ascending"type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={ascendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                </div>
+                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high" onClick={handleFilterCheck}></input>
                             </div>
                             <div className="filter-attributes">
-                                <h2>Urgency</h2>
-                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high"></input>
+                                <div className="filter-label-container">
+                                    <h2>Urgency</h2>
+                                    <button className="filter-btn filter-btn-desc" id="filter-btn-descending" type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={descendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                    <button className="filter-btn filter-btn-asce" id="filter-btn-ascending"type="button" onClick={handleFilterOrderClick}>
+                                        <img id="filter-img" src={ascendingArrow} aria-hidden={true} alt="ascending-arrow" draggable="false"></img>
+                                    </button>
+                                </div>
+                                <input type="checkbox" className="filter-check-box" id="status-checkbox" name="filter" value="high" onClick={handleFilterCheck}></input>
                             </div>
                         </div>
                     </div>
